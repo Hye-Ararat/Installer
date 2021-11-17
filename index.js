@@ -123,7 +123,7 @@ async function run() {
     } catch {
       error(e);
     }
-    new_account ? bar1.update(33) : bar1.update(100)
+    new_account ? bar1.update(33) : bar1.update(100); process.exit(0);
   }
   if (new_account) {
     task = "creating a new user";
@@ -146,6 +146,7 @@ async function run() {
         error(e);
     }
     bar1.update(100);
+    process.exit(0);
   }
 }
 run();
