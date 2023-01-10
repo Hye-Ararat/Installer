@@ -132,6 +132,7 @@ const sleep = (ms) => {
                 }
             }
             if (d.toString().includes("You're node has been setup! You can now navigate to it using the URL you specified earlier in your web browser.")) {
+                console.log("Hye Ararat has been successfully installed and configured! You can now navigate to it using the URL you specified earlier in your web browser.")
                 process.exit(0)
             }
         })
