@@ -120,6 +120,9 @@ const sleep = (ms) => {
             if (d.toString().includes("araratCloned") || d.toString().includes("fatal: destination path '.' already exists and is not an empty directory")) {
                 if (!araratCloned1) {
                     araratCloned1 = true;
+                    setTimeout(() => {
+                        araratDone = true;
+                    }, 30000)
                 } else {
                     araratDone = true;
                 }
@@ -185,7 +188,7 @@ const sleep = (ms) => {
         await nodeReady();
         await log(`✅ Node.JS has been successfully installed.`)
         await log(`Downloading Hye Ararat...`);
-        channel.write(`mkdir usr/lib/ararat\n`)
+        channel.write(`mkdir /usr/lib/ararat\n`)
         channel.write(`cd /usr/lib/ararat && git clone https://github.com/Hye-Ararat/Ararat.git . && echo araratCloned\n`);
         function araratReady() {
             return new Promise((resolve, reject) => {
