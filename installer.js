@@ -267,7 +267,7 @@ const sleep = (ms) => {
   );
   await npmReady();
   await log(`✅ Node modules installed!`);
-  await log(`Initiating node setup...`);
+  await log(`Initiating remote setup...`);
   channel.write("node configure.js\n");
   channel.stdout.pipe(process.stdout);
   process.stdin.pipe(channel.stdin);
