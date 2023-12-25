@@ -94,13 +94,14 @@ const sleep = (ms) => {
   let curlDone = false;
   let nvmDone = false;
   let nodeDone = false;
+  let bunDone = false;
   let araratCloned1 = false;
   let araratDone = false;
   let npmIDone1 = false;
   let npmIDone = false;
   let channel = await connection.requestShell();
   channel.on("data", async (d) => {
-    //console.log(d.toString())
+    //console.log(d.toString());
     if (d.toString().includes("password for")) {
       channel.write(password.value + "\n");
       esc = true;
@@ -117,7 +118,7 @@ const sleep = (ms) => {
       if (!curlDone1) {
         curlDone1 = true;
       } else {
-        await log("✅ Dependencies curl git were installed successfully");
+        await log("✅ Dependencies curl git unzip were installed successfully");
         curlDone = true;
       }
     }
@@ -126,6 +127,9 @@ const sleep = (ms) => {
     }
     if (d.toString().includes("Now using node")) {
       nodeDone = true;
+    }
+    if (d.toString().includes("bun was installed")) {
+      bunDone = true;
     }
     if (
       d.toString().includes("araratCloned") ||
@@ -169,7 +173,7 @@ const sleep = (ms) => {
     channel.write("sudo su\n");
   }
   await escalated();
-  await log("Installing dependency: curl git");
+  await log("Installing dependency: curl git unzip");
   function curlInstalled() {
     return new Promise((resolve, reject) => {
       let interval = setInterval(() => {
@@ -180,8 +184,8 @@ const sleep = (ms) => {
       }, 100);
     });
   }
-
-  channel.write("apt-get install -y curl git && echo curlDone\n");
+  channel.write("export DEBIAN_FRONTEND=noninteractive\n");
+  channel.write("apt-get install -y curl git unzip && echo curlDone\n");
   await curlInstalled();
 
   await log("Installing Node.JS...");
@@ -216,6 +220,20 @@ const sleep = (ms) => {
   }
   await nodeReady();
   await log(`✅ Node.JS has been successfully installed.`);
+  await log(`Installing Bun...`);
+  function bunReady() {
+    return new Promise((resolve, reject) => {
+      let interval = setInterval(() => {
+        if (bunDone) {
+          clearInterval(interval);
+          return resolve(true);
+        }
+      }, 100);
+    });
+  }
+  channel.write("curl -fsSL https://bun.sh/install | bash\n");
+  await bunReady();
+  await log(`✅ Bun has been successfully installed.`);
   await log(`Downloading Hye Ararat...`);
   channel.write(`mkdir /usr/lib/ararat\n`);
   channel.write(
@@ -233,8 +251,7 @@ const sleep = (ms) => {
   }
   await araratReady();
   await log(`✅ Hye Ararat has been downloaded`);
-  channel.write("cd core\n");
-  await log(`Installing node modules...`);
+  await log(`Installing node modules (this will take a bit)...`);
   function npmReady() {
     return new Promise((resolve, reject) => {
       let interval = setInterval(() => {
@@ -246,12 +263,12 @@ const sleep = (ms) => {
     });
   }
   channel.write(
-    `npm install && npm link && cd ../ && npm install && echo npmDone\n`
+    `npm i -g yarn && yarn install --ignore-engines && echo npmDone\n`
   );
   await npmReady();
   await log(`✅ Node modules installed!`);
   await log(`Initiating node setup...`);
-  channel.write("node core/configure.js\n");
+  channel.write("node configure.js\n");
   channel.stdout.pipe(process.stdout);
   process.stdin.pipe(channel.stdin);
 })();
